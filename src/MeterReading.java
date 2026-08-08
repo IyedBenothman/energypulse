@@ -8,10 +8,10 @@ public class MeterReading{
     public String getMeterId(){
         return MeterId;
     }
-    public double getconsumptionKwh(){
+    public double getConsumptionKwh(){
         return consumptionKwh;  
     }
-    public boolean isHighConsumtion(){
+    public boolean isHighConsumption(){
         return consumptionKwh > 10;
     }
 }

@@ -1,3 +1,4 @@
+package com.iyed.energypulse;
 public class MeterReading{
     private String MeterId;
     private double consumptionKwh;

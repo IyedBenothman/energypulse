@@ -1,3 +1,4 @@
+package com.iyed.energypulse;
 public class Main{
     public static void main(String[] args){
         MeterReading reading = new MeterReading("METER-001", 15.4);

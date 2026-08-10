@@ -5,6 +5,12 @@
 
     <modelVersion>4.0.0</modelVersion>
 
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>4.1.0</version>
+    </parent>
+
     <groupId>com.iyed</groupId>
     <artifactId>energypulse</artifactId>
     <version>1.0-SNAPSHOT</version>
@@ -20,15 +26,30 @@
         <version>6.1.2</version>
         <scope>test</scope>
     </dependency>
+
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-webmvc</artifactId>
+    </dependency>
+
     </dependencies>
 
+
+
     <build>
-    <plugins>
+    <plugins> 
+
         <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-surefire-plugin</artifactId>
             <version>3.5.5</version>
         </plugin>
+
+        <plugin>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-maven-plugin</artifactId>
+        </plugin>
+
     </plugins>
     </build>
 

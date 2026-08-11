@@ -8,26 +8,22 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
 public class CustomerController{
+
+    private final CustomerService customerService;
+
+    public CustomerController(CustomerService customerService){
+        this.customerService = customerService;
+    }
     
     @GetMapping("/api/customers/{customerId}")
     public Customer getCustomer(@PathVariable String customerId){
-
-        Customer customer = new Customer(customerId, "Iyed");
-
-        customer.addReading(new MeterReading("METER001",5.2));
-        customer.addReading(new MeterReading("METER001",12.8));
-
-        return customer;
+        return customerService.getCustomer(customerId);
     }
 
     @PostMapping("/api/customers")
     public Customer createCustomer(@RequestBody CreateCustomerRequest request){
-        Customer customer = new Customer(
-            request.customerId(),
-            request.name()
-        );
-
-        return customer;
+        
+        return customerService.createCustomer(request);
     }
 
 }

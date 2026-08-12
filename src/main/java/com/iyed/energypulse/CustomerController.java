@@ -26,4 +26,12 @@ public class CustomerController{
         return customerService.createCustomer(request);
     }
 
+    @PostMapping("/api/customers/{customerId}/readings")
+    public Customer addMeterReading(
+            @PathVariable String customerId,
+            @RequestBody CreateMeterReadingRequest request){
+        
+        return customerService.addMeterReading(customerId, request);
+    }
+
 }

@@ -13,8 +13,15 @@ public class CustomerService{
     }
 
     public Customer createCustomer(CreateCustomerRequest request){
+        String customerId = request.customerId();
+        if (customerRepository.existsById(customerId)){
+            throw new ResponseStatusException(
+                HttpStatus.CONFLICT,
+                "Customer " + customerId + " already exists." 
+            );
+        }
         Customer customer = new Customer(
-            request.customerId(),
+            customerId,
             request.name()
         );
         customerRepository.save(customer);
@@ -23,7 +30,16 @@ public class CustomerService{
     }
 
     public Customer getCustomer(String customerId){
-        return customerRepository.findById(customerId);
+        Customer customer = customerRepository.findById(customerId);
+
+        if (customer == null) {
+            throw new ResponseStatusException(
+                HttpStatus.NOT_FOUND,
+                "Customer " + customerId + " not found"
+            );
+        }
+
+        return customer;
     }
 
     public Customer addMeterReading(

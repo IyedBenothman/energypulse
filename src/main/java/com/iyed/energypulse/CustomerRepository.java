@@ -17,4 +17,9 @@ public class CustomerRepository{
     public Customer findById(String customerId){
         return customers.get(customerId);
     }
+
+    public boolean existsById(String customerId) {
+    return customers.containsKey(customerId);
+    }
+
 }

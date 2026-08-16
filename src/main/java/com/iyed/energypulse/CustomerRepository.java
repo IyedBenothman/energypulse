@@ -1,25 +1,6 @@
 package com.iyed.energypulse;
 
-import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.HashMap;
-import java.util.Map;
-
-@Repository
-public class CustomerRepository{
-
-    private final Map<String,Customer> customers = new HashMap<>();
-
-    public void save(Customer customer){
-        customers.put(customer.getCustomerId(), customer);
-    }
-
-    public Customer findById(String customerId){
-        return customers.get(customerId);
-    }
-
-    public boolean existsById(String customerId) {
-    return customers.containsKey(customerId);
-    }
-
+public interface CustomerRepository extends JpaRepository<Customer,String>{
 }

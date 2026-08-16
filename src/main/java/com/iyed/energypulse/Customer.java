@@ -1,17 +1,26 @@
 package com.iyed.energypulse;
 import java.util.ArrayList;
 import java.util.List;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.OneToMany;
 
+@Entity
 public class Customer{
 
+    @Id
     private String customerId;
     private String name;
-    private List<MeterReading> readings;
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
+    private List<MeterReading> readings = new ArrayList<>();
+
+    protected Customer(){
+    }
 
     public Customer(String customerId, String name){
         this.customerId = customerId;
         this.name = name;
-        this.readings = new ArrayList<>();
     }
 
     public String getCustomerId(){
@@ -23,6 +32,7 @@ public class Customer{
     } 
     public void addReading(MeterReading reading){
         readings.add(reading);
+        reading.setCustomer(this);
     }
     public double getTotalConsumption(){
         double total = 0.0;

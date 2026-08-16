@@ -10,6 +10,7 @@ import static org.mockito.Mockito.verify;
 import org.springframework.web.server.ResponseStatusException;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
+import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
 public class CustomerServiceTest {
@@ -51,7 +52,7 @@ public class CustomerServiceTest {
         Customer customer = new Customer("C001", "Iyed");
         
         when(customerRepository.findById("C001"))
-            .thenReturn(customer);
+            .thenReturn(Optional.of(customer));
         
         Customer result = customerService.getCustomer("C001");
         
@@ -63,7 +64,7 @@ public class CustomerServiceTest {
     @Test
     void shouldReturnNotFoundForMissingCustomer() {
         when(customerRepository.findById("C999"))
-                .thenReturn(null);
+                .thenReturn(Optional.empty());
 
         ResponseStatusException exception =
                 assertThrows(
@@ -78,7 +79,7 @@ public class CustomerServiceTest {
         Customer customer = new Customer("C001", "Alex");
 
         when(customerRepository.findById("C001"))
-                .thenReturn(customer);
+                .thenReturn(Optional.of(customer));
 
         CreateMeterReadingRequest request =
                 new CreateMeterReadingRequest("METER-001", 14.6);
@@ -92,7 +93,7 @@ public class CustomerServiceTest {
     @Test
     void shouldRejectMeterReadingForMissingCustomer() {
         when(customerRepository.findById("C999"))
-                .thenReturn(null);
+                .thenReturn(Optional.empty());
 
         CreateMeterReadingRequest request =
                 new CreateMeterReadingRequest("METER-001", 14.6);

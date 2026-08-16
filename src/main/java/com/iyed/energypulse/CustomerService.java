@@ -29,30 +29,22 @@ public class CustomerService{
         return customer;
     }
 
-    public Customer getCustomer(String customerId){
-        Customer customer = customerRepository.findById(customerId);
-
-        if (customer == null) {
-            throw new ResponseStatusException(
+    public Customer getCustomer(String customerId) {
+        return customerRepository.findById(customerId)
+            .orElseThrow(() -> new ResponseStatusException(
                 HttpStatus.NOT_FOUND,
                 "Customer " + customerId + " not found"
-            );
-        }
-
-        return customer;
+            ));
     }
 
     public Customer addMeterReading(
             String customerId,
             CreateMeterReadingRequest request){
-        Customer customer = customerRepository.findById(customerId);
-
-        if(customer == null){
-            throw new ResponseStatusException(
+        Customer customer = customerRepository.findById(customerId)
+            .orElseThrow(() -> new ResponseStatusException(
                 HttpStatus.NOT_FOUND,
                 "Customer " + customerId + " not found"
-            );
-        }
+            ));
         
         MeterReading reading = new MeterReading(
             request.meterId(),

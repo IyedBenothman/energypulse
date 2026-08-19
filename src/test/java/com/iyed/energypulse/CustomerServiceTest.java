@@ -11,6 +11,7 @@ import org.springframework.web.server.ResponseStatusException;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 import java.util.Optional;
+import static org.mockito.ArgumentMatchers.any;
 
 @ExtendWith(MockitoExtension.class)
 public class CustomerServiceTest {
@@ -24,12 +25,16 @@ public class CustomerServiceTest {
     @Test
     void shouldCreateCustomer(){
         CreateCustomerRequest request = new CreateCustomerRequest("C001","Alex");
-        Customer customer = customerService.createCustomer(request);
     
-        assertEquals("C001", customer.getCustomerId());
-        assertEquals("Alex", customer.getName());
+        when(customerRepository.save(any(Customer.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
 
-        verify(customerRepository).save(customer);
+        CustomerResponse response = customerService.createCustomer(request);
+    
+        assertEquals("C001", response.customerId());
+        assertEquals("Alex", response.name());
+
+        verify(customerRepository).save(any(Customer.class));
     }
     @Test
     void shouldRejectDuplicateCustomer() {
@@ -54,10 +59,10 @@ public class CustomerServiceTest {
         when(customerRepository.findById("C001"))
             .thenReturn(Optional.of(customer));
         
-        Customer result = customerService.getCustomer("C001");
+        CustomerResponse result = customerService.getCustomer("C001");
         
-        assertEquals(result.getName() , customer.getName());
-        assertEquals(result.getCustomerId(), customer.getCustomerId());
+        assertEquals(result.name() , customer.getName());
+        assertEquals(result.customerId(), customer.getCustomerId());
 
     }
 
@@ -81,14 +86,17 @@ public class CustomerServiceTest {
         when(customerRepository.findById("C001"))
                 .thenReturn(Optional.of(customer));
 
+        when(customerRepository.save(customer))
+                .thenReturn(customer);
+
         CreateMeterReadingRequest request =
                 new CreateMeterReadingRequest("METER-001", 14.6);
 
-        Customer result =
+        CustomerResponse result =
                 customerService.addMeterReading("C001", request);
 
-        assertEquals(14.6, result.getTotalConsumption(), 0.0001);
-        assertEquals(1, result.getHighConsumptionCount());
+        assertEquals(14.6, result.totalConsumption(), 0.0001);
+        assertEquals(1, result.highConsumptionCount());
     }
     @Test
     void shouldRejectMeterReadingForMissingCustomer() {

@@ -17,18 +17,18 @@ public class CustomerController{
     }
     
     @GetMapping("/api/customers/{customerId}")
-    public Customer getCustomer(@PathVariable String customerId){
+    public CustomerResponse getCustomer(@PathVariable String customerId){
         return customerService.getCustomer(customerId);
     }
 
     @PostMapping("/api/customers")
-    public Customer createCustomer(@Valid @RequestBody CreateCustomerRequest request){
+    public CustomerResponse createCustomer(@Valid @RequestBody CreateCustomerRequest request){
         
         return customerService.createCustomer(request);
     }
 
     @PostMapping("/api/customers/{customerId}/readings")
-    public Customer addMeterReading(
+    public CustomerResponse addMeterReading(
             @PathVariable String customerId,
             @RequestBody @Valid CreateMeterReadingRequest request){
         

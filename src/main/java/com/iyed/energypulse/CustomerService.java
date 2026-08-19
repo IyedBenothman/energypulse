@@ -12,7 +12,7 @@ public class CustomerService{
         this.customerRepository = customerRepository;
     }
 
-    public Customer createCustomer(CreateCustomerRequest request){
+    public CustomerResponse createCustomer(CreateCustomerRequest request){
         String customerId = request.customerId();
         if (customerRepository.existsById(customerId)){
             throw new ResponseStatusException(
@@ -24,22 +24,34 @@ public class CustomerService{
             customerId,
             request.name()
         );
-        customerRepository.save(customer);
+        Customer savedCustomer = customerRepository.save(customer);
 
-        return customer;
+        return toResponse(savedCustomer);
     }
 
-    public Customer getCustomer(String customerId) {
-        return customerRepository.findById(customerId)
+    private CustomerResponse toResponse(Customer customer) {
+        return new CustomerResponse(
+            customer.getCustomerId(),
+            customer.getName(),
+            customer.getTotalConsumption(),
+            customer.getHighConsumptionCount()
+        );
+    }
+
+    public CustomerResponse getCustomer(String customerId) {
+        Customer customer = customerRepository.findById(customerId)
             .orElseThrow(() -> new ResponseStatusException(
                 HttpStatus.NOT_FOUND,
                 "Customer " + customerId + " not found"
             ));
+        return toResponse(customer);
     }
 
-    public Customer addMeterReading(
+    public CustomerResponse addMeterReading(
+            
             String customerId,
             CreateMeterReadingRequest request){
+       
         Customer customer = customerRepository.findById(customerId)
             .orElseThrow(() -> new ResponseStatusException(
                 HttpStatus.NOT_FOUND,
@@ -52,6 +64,8 @@ public class CustomerService{
         );
         
         customer.addReading(reading);
-        return customer;
+        Customer savedCustomer = customerRepository.save(customer);
+
+        return toResponse(savedCustomer);
     }
 }

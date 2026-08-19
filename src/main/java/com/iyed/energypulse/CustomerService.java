@@ -3,6 +3,7 @@ package com.iyed.energypulse;
 import org.springframework.stereotype.Service;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
+import java.util.List;
 
 @Service
 public class CustomerService{
@@ -68,4 +69,21 @@ public class CustomerService{
 
         return toResponse(savedCustomer);
     }
+
+    public List<MeterReadingResponse> getMeterReadings(String customerId){
+        Customer customer = customerRepository.findById(customerId)
+                .orElseThrow(()-> new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "Customer " + customerId + " not found"
+                ));
+        return customer.getReadings()
+            .stream()
+            .map(reading-> new MeterReadingResponse(
+                reading.getId(),
+                reading.getMeterId(),
+                reading.getConsumptionKwh()
+            ))
+            .toList();
+    }
+
 }

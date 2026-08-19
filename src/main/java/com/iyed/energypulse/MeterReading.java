@@ -27,6 +27,10 @@ public class MeterReading{
         this.consumptionKwh = consumptionKwh;
     }
 
+    public Long getId(){
+        return id;
+    }
+
     public String getMeterId(){
         return MeterId;
     }

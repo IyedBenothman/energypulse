@@ -12,6 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 import java.util.Optional;
 import static org.mockito.ArgumentMatchers.any;
+import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
 public class CustomerServiceTest {
@@ -111,6 +112,39 @@ public class CustomerServiceTest {
                         ResponseStatusException.class,
                         () -> customerService.addMeterReading("C999", request)
                 );
+
+        assertEquals(404, exception.getStatusCode().value());
+    }
+
+    @Test
+    void ShouldGetMeterReading(){
+        Customer customer = new Customer("C001","ALEX");
+        customer.addReading(new MeterReading("METER-001",14.6));
+        customer.addReading(new MeterReading("METER-002",8.2));
+
+        when(customerRepository.findById("C001"))
+                .thenReturn(Optional.of(customer));
+        
+        List<MeterReadingResponse> result = customerService.getMeterReadings("C001");
+
+        assertEquals(2, result.size());
+
+        assertEquals("METER-001", result.get(0).meterId());
+        assertEquals(14.6, result.get(0).consumptionKwh(),0.0001);
+
+        assertEquals("METER-002", result.get(1).meterId());
+        assertEquals(8.2, result.get(1).consumptionKwh(),0.0001);
+    }
+
+    @Test
+    void shouldReturnNotFoundWhenGettingReadingsForMissingCustomer(){
+        when(customerRepository.findById("C999"))
+                .thenReturn(Optional.empty());
+
+        ResponseStatusException exception = assertThrows(
+                ResponseStatusException.class,
+                ()-> customerService.getMeterReadings("C999")
+        );
 
         assertEquals(404, exception.getStatusCode().value());
     }

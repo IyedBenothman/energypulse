@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import jakarta.validation.Valid;
+import java.util.List;
 
 @RestController
 public class CustomerController{
@@ -19,6 +20,11 @@ public class CustomerController{
     @GetMapping("/api/customers/{customerId}")
     public CustomerResponse getCustomer(@PathVariable String customerId){
         return customerService.getCustomer(customerId);
+    }
+
+    @GetMapping("/api/customers/{customerId}/readings")
+    public List<MeterReadingResponse> getMeterReadings(@PathVariable String customerId){
+        return customerService.getMeterReadings(customerId);
     }
 
     @PostMapping("/api/customers")

@@ -14,6 +14,10 @@ public class Customer{
     private String name;
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
     private List<MeterReading> readings = new ArrayList<>();
+    
+    public List<MeterReading> getReadings(){
+        return readings;
+    }
 
     protected Customer(){
     }

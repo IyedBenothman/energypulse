@@ -20,6 +20,9 @@ public class CustomerServiceTest {
     @Mock
     private CustomerRepository customerRepository;
 
+    @Mock
+    private MeterReadingRepository meterReadingRepository;
+
     @InjectMocks
     private CustomerService customerService;
 
@@ -147,6 +150,34 @@ public class CustomerServiceTest {
         );
 
         assertEquals(404, exception.getStatusCode().value());
+    }
+
+    @Test
+    void shouldGetMeterReadingsSortedByConsumption() {
+        
+        MeterReading reading1 = new MeterReading("METER-001", 14.6);
+        MeterReading reading2 = new MeterReading("METER-002", 5.2);
+        MeterReading reading3 = new MeterReading("METER-003", 22.8);
+        
+        when(customerRepository.existsById("C001"))
+                .thenReturn(true);
+
+        when(meterReadingRepository
+                .findByCustomerCustomerIdOrderConsumptionKwhDesc("C001"))
+                .thenReturn(List.of(
+                        reading3,
+                        reading1,
+                        reading2
+                ));
+
+        List<MeterReadingResponse> result =
+                customerService.getMeterReadingsSortedByConsumption("C001");
+
+        assertEquals(3, result.size());
+
+        assertEquals(22.8, result.get(0).consumptionKwh(), 0.0001);
+        assertEquals(14.6, result.get(1).consumptionKwh(), 0.0001);
+        assertEquals(5.2, result.get(2).consumptionKwh(), 0.0001);
     }
 }
 

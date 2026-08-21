@@ -39,19 +39,13 @@ public class Customer{
         reading.setCustomer(this);
     }
     public double getTotalConsumption(){
-        double total = 0.0;
-        for (MeterReading reading : readings){
-            total += reading.getConsumptionKwh();
-        }
-        return total;
+        return readings.stream()
+            .mapToDouble(MeterReading::getConsumptionKwh)
+            .sum();
     }
     public int getHighConsumptionCount(){
-        int total = 0;
-        for(MeterReading reading : readings){
-            if(reading.isHighConsumption()) {
-                total++;
-            }
-        }
-        return total;
+        return (int) readings.stream()
+            .filter(MeterReading::isHighConsumption)
+            .count();
     }
 }

@@ -9,8 +9,14 @@ import java.util.List;
 public class CustomerService{
 
     private final CustomerRepository customerRepository;
-    public CustomerService(CustomerRepository customerRepository){
-        this.customerRepository = customerRepository;
+    private final MeterReadingRepository meterReadingRepository;
+
+    public CustomerService(
+                CustomerRepository customerRepository,
+                MeterReadingRepository meterReadingRepository){
+
+            this.customerRepository = customerRepository;
+            this.meterReadingRepository = meterReadingRepository;
     }
 
     public CustomerResponse createCustomer(CreateCustomerRequest request){
@@ -77,6 +83,24 @@ public class CustomerService{
                     "Customer " + customerId + " not found"
                 ));
         return customer.getReadings()
+            .stream()
+            .map(reading-> new MeterReadingResponse(
+                reading.getId(),
+                reading.getMeterId(),
+                reading.getConsumptionKwh()
+            ))
+            .toList();
+    }
+
+    public List<MeterReadingResponse> getMeterReadingsSortedByConsumption(String customerId){
+        if (!customerRepository.existsById(customerId)){
+            throw new ResponseStatusException(
+                HttpStatus.NOT_FOUND,
+                "Customer "+ customerId + " not found"
+            );
+        }
+        return meterReadingRepository
+            .findByCustomerCustomerIdOrderConsumptionKwhDesc(customerId)
             .stream()
             .map(reading-> new MeterReadingResponse(
                 reading.getId(),

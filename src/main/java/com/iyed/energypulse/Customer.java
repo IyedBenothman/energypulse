@@ -48,4 +48,8 @@ public class Customer{
             .filter(MeterReading::isHighConsumption)
             .count();
     }
+
+    public void rename(String name){
+        this.name = name;
+    }
 }

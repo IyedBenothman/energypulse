@@ -123,4 +123,29 @@ public class CustomerService{
             .toList();
     }
 
+    public CustomerResponse updateCustomer(
+            String customerId,
+            UpdateCustomerRequest request){
+        
+        Customer customer = customerRepository.findById(customerId)
+            .orElseThrow(() -> new ResponseStatusException(
+                HttpStatus.NOT_FOUND,
+                "Customer "+ customerId + " not found"
+            ));
+        
+        customer.rename(request.name());
+
+        return toResponse(customer);
+    }
+
+    public void deleteCustomer(String customerId) {
+        Customer customer = customerRepository.findById(customerId)
+            .orElseThrow(() -> new ResponseStatusException(
+                HttpStatus.NOT_FOUND,
+                "Customer " + customerId + " not found"
+            ));
+
+        customerRepository.delete(customer);
+    }
+
 }

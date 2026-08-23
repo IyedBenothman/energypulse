@@ -5,8 +5,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PatchMapping;
 import jakarta.validation.Valid;
 import java.util.List;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.http.HttpStatus;
 
 @RestController
 public class CustomerController{
@@ -49,6 +53,22 @@ public class CustomerController{
             @RequestBody @Valid CreateMeterReadingRequest request){
         
         return customerService.addMeterReading(customerId, request);
+    }
+
+    @PatchMapping("/api/customers/{customerId}")
+    public CustomerResponse updateCustomer(
+            @PathVariable String customerId,
+            @Valid @RequestBody UpdateCustomerRequest request){
+        
+        return customerService.updateCustomer(customerId, request);
+    }
+
+    @DeleteMapping("/api/customers/{customerId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteCustomer(
+            @PathVariable String customerId){
+        
+        customerService.deleteCustomer(customerId);
     }
 
 }

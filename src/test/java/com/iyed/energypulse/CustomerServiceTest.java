@@ -205,6 +205,63 @@ public class CustomerServiceTest {
         verify(customerRepository).findAllWithReadings();
     }
 
+    @Test
+    void shouldUpdateCustomerName(){
+        Customer customer = new Customer("C001", "Alex");
+
+        when(customerRepository.findById("C001"))
+                .thenReturn(Optional.of(customer));
+
+        UpdateCustomerRequest request = new UpdateCustomerRequest("John");
+
+        CustomerResponse result = customerService.updateCustomer("C001",request);
+
+        assertEquals("C001", result.customerId());
+        assertEquals("John", result.name());
+    }
+
+    @Test
+    void shouldRejectUpdatingNonExistentCustomer(){
+        when(customerRepository.findById("C999"))
+                .thenReturn(Optional.empty());
+        
+        UpdateCustomerRequest request = new UpdateCustomerRequest("John");
+
+        ResponseStatusException exception =
+                assertThrows(
+                        ResponseStatusException.class,
+                        () -> customerService.updateCustomer("C999",request)
+                );
+        
+        assertEquals(404, exception.getStatusCode().value());
+    }
+
+    @Test
+    void shouldDeleteCustomer() {
+        Customer customer = new Customer("C001", "Alex");
+
+        when(customerRepository.findById("C001"))
+                .thenReturn(Optional.of(customer));
+
+         customerService.deleteCustomer("C001");
+
+        verify(customerRepository).delete(customer);
+    }
+
+    @Test
+    void shouldRejectDeletingNonExistentCustomer() {
+        when(customerRepository.findById("C999"))
+                .thenReturn(Optional.empty());
+
+        ResponseStatusException exception =
+                assertThrows(
+                ResponseStatusException.class,
+                () -> customerService.deleteCustomer("C999")
+                );
+
+        assertEquals(404, exception.getStatusCode().value());
+    }
+
 }
 
 

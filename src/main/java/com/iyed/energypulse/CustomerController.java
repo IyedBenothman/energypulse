@@ -32,6 +32,11 @@ public class CustomerController{
         return customerService.getMeterReadingsSortedByConsumption(customerId);
     }
 
+    @GetMapping("/api/customers")
+    public List<CustomerResponse> getAllCustomers() {
+        return customerService.getAllCustomers();
+    }
+
     @PostMapping("/api/customers")
     public CustomerResponse createCustomer(@Valid @RequestBody CreateCustomerRequest request){
         

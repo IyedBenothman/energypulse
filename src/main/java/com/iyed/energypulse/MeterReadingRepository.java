@@ -6,7 +6,7 @@ import java.util.List;
 public interface MeterReadingRepository 
         extends JpaRepository<MeterReading, Long>{
 
-    List<MeterReading> findByCustomerCustomerIdOrderConsumptionKwhDesc(
+    List<MeterReading> findByCustomerCustomerIdOrderByConsumptionKwhDesc(
             String customerId
     );
 }

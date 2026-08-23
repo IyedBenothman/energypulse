@@ -4,8 +4,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class CustomerService{
 
     private final CustomerRepository customerRepository;
@@ -45,6 +47,7 @@ public class CustomerService{
         );
     }
 
+    @Transactional(readOnly = true)
     public CustomerResponse getCustomer(String customerId) {
         Customer customer = customerRepository.findById(customerId)
             .orElseThrow(() -> new ResponseStatusException(
@@ -76,6 +79,7 @@ public class CustomerService{
         return toResponse(savedCustomer);
     }
 
+    @Transactional(readOnly = true)
     public List<MeterReadingResponse> getMeterReadings(String customerId){
         Customer customer = customerRepository.findById(customerId)
                 .orElseThrow(()-> new ResponseStatusException(
@@ -92,6 +96,7 @@ public class CustomerService{
             .toList();
     }
 
+    @Transactional(readOnly = true)
     public List<MeterReadingResponse> getMeterReadingsSortedByConsumption(String customerId){
         if (!customerRepository.existsById(customerId)){
             throw new ResponseStatusException(
@@ -100,13 +105,21 @@ public class CustomerService{
             );
         }
         return meterReadingRepository
-            .findByCustomerCustomerIdOrderConsumptionKwhDesc(customerId)
+            .findByCustomerCustomerIdOrderByConsumptionKwhDesc(customerId)
             .stream()
             .map(reading-> new MeterReadingResponse(
                 reading.getId(),
                 reading.getMeterId(),
                 reading.getConsumptionKwh()
             ))
+            .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<CustomerResponse> getAllCustomers() {
+        return customerRepository.findAllWithReadings()
+            .stream()
+            .map(this::toResponse)
             .toList();
     }
 

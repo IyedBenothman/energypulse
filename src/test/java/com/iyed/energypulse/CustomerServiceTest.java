@@ -163,7 +163,7 @@ public class CustomerServiceTest {
                 .thenReturn(true);
 
         when(meterReadingRepository
-                .findByCustomerCustomerIdOrderConsumptionKwhDesc("C001"))
+                .findByCustomerCustomerIdOrderByConsumptionKwhDesc("C001"))
                 .thenReturn(List.of(
                         reading3,
                         reading1,
@@ -179,6 +179,32 @@ public class CustomerServiceTest {
         assertEquals(14.6, result.get(1).consumptionKwh(), 0.0001);
         assertEquals(5.2, result.get(2).consumptionKwh(), 0.0001);
     }
+
+    @Test
+    void shouldGetAllCustomersWithReadings() {
+        Customer customer1 = new Customer("C001", "Alex");
+        customer1.addReading(new MeterReading("METER-001", 10.0));
+        customer1.addReading(new MeterReading("METER-002", 20.0));
+
+        Customer customer2 = new Customer("C002", "Sam");
+
+        when(customerRepository.findAllWithReadings())
+                .thenReturn(List.of(customer1, customer2));
+
+        List<CustomerResponse> result =
+                customerService.getAllCustomers();
+
+        assertEquals(2, result.size());
+
+        assertEquals("C001", result.get(0).customerId());
+        assertEquals(30.0, result.get(0).totalConsumption(), 0.0001);
+
+        assertEquals("C002", result.get(1).customerId());
+        assertEquals(0.0, result.get(1).totalConsumption(), 0.0001);
+
+        verify(customerRepository).findAllWithReadings();
+    }
+
 }
 
 

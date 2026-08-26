@@ -5,6 +5,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 @Service
 @Transactional
@@ -146,6 +149,59 @@ public class CustomerService{
             ));
 
         customerRepository.delete(customer);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<MeterReadingResponse> getMeterReadingsPaginated(
+            String customerId,
+            int page,
+            int size) {
+
+        if (!customerRepository.existsById(customerId)) {
+            throw new ResponseStatusException(
+                HttpStatus.NOT_FOUND,
+                "Customer " + customerId + " not found"
+            );
+        }
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        return meterReadingRepository
+            .findByCustomerCustomerId(customerId, pageable)
+            .map(reading -> new MeterReadingResponse(
+                reading.getId(),
+                reading.getMeterId(),
+                reading.getConsumptionKwh()
+            ));
+    }
+
+    @Transactional(readOnly = true)
+    public Page<MeterReadingResponse> getFilteredMeterReadings(
+            String customerId,
+            double minConsumption,
+            int page,
+            int size) {
+
+        if (!customerRepository.existsById(customerId)) {
+            throw new ResponseStatusException(
+                HttpStatus.NOT_FOUND,
+                "Customer " + customerId + " not found"
+            );
+        }
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        return meterReadingRepository
+            .findByCustomerCustomerIdAndConsumptionKwhGreaterThanEqual(
+                customerId,
+                minConsumption,
+                pageable
+            )
+            .map(reading -> new MeterReadingResponse(
+                reading.getId(),
+                reading.getMeterId(),
+                reading.getConsumptionKwh()
+            ));
     }
 
 }

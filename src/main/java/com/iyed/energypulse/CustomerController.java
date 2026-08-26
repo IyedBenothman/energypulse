@@ -11,6 +11,8 @@ import java.util.List;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.data.domain.Page;
 
 @RestController
 public class CustomerController{
@@ -39,6 +41,34 @@ public class CustomerController{
     @GetMapping("/api/customers")
     public List<CustomerResponse> getAllCustomers() {
         return customerService.getAllCustomers();
+    }
+
+    @GetMapping("/api/customers/{customerId}/readings/page")
+    public Page<MeterReadingResponse> getMeterReadingsPaginated(
+            @PathVariable String customerId,
+            @RequestParam int page,
+            @RequestParam int size){
+        
+        return customerService.getMeterReadingsPaginated(
+            customerId,
+            page,
+            size
+        );
+    }
+
+    @GetMapping("/api/customers/{customerId}/readings/filter")
+    public Page<MeterReadingResponse> getFilteredMeterReadings(
+            @PathVariable String customerId,
+            @RequestParam double minConsumption,
+            @RequestParam int page,
+            @RequestParam int size) {
+
+        return customerService.getFilteredMeterReadings(
+            customerId,
+            minConsumption,
+            page,
+            size
+        );
     }
 
     @PostMapping("/api/customers")

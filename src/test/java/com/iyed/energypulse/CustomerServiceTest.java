@@ -13,6 +13,9 @@ import static org.mockito.Mockito.when;
 import java.util.Optional;
 import static org.mockito.ArgumentMatchers.any;
 import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 
 @ExtendWith(MockitoExtension.class)
 public class CustomerServiceTest {
@@ -261,6 +264,68 @@ public class CustomerServiceTest {
 
         assertEquals(404, exception.getStatusCode().value());
     }
+
+    @Test
+    void shouldGetFilteredMeterReadings() {
+        MeterReading reading1 = new MeterReading("METER-001", 14.6);
+        MeterReading reading2 = new MeterReading("METER-003", 22.8);
+
+        when(customerRepository.existsById("C001"))
+                .thenReturn(true);
+
+        Page<MeterReading> repositoryResult =
+                new PageImpl<>(
+                        List.of(reading1, reading2),
+                        PageRequest.of(0, 2),
+                        3
+                );
+
+        when(meterReadingRepository
+                .findByCustomerCustomerIdAndConsumptionKwhGreaterThanEqual(
+                        "C001",
+                        10.0,
+                        PageRequest.of(0, 2)
+                ))
+                .thenReturn(repositoryResult);
+
+        Page<MeterReadingResponse> result =
+                customerService.getFilteredMeterReadings(
+                        "C001",
+                        10.0,
+                        0,
+                        2
+                );
+
+        assertEquals(2, result.getNumberOfElements());
+        assertEquals(3, result.getTotalElements());
+
+        assertEquals(14.6,
+                result.getContent().get(0).consumptionKwh(),
+                0.0001);
+
+        assertEquals(22.8,
+                result.getContent().get(1).consumptionKwh(),
+                0.0001);
+    }
+    @Test
+    void shouldRejectFilteringReadingsForMissingCustomer() {
+        when(customerRepository.existsById("C999"))
+                .thenReturn(false);
+
+        ResponseStatusException exception =
+                assertThrows(
+                        ResponseStatusException.class,
+                        () -> customerService.getFilteredMeterReadings(
+                                "C999",
+                                10.0,
+                                0,
+                                2
+                        )
+                );
+
+        assertEquals(404, exception.getStatusCode().value());
+    }
+
 
 }
 

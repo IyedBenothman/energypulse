@@ -1,0 +1,2 @@
+CREATE INDEX idx_meter_reading_customer_consumption
+ON meter_reading(customer_id, consumption_kwh);

@@ -1,0 +1,66 @@
+{
+  "containerDefinitions": [
+    {
+      "name": "energypulse",
+      "image": "516148679165.dkr.ecr.eu-north-1.amazonaws.com/energypulse:207b796a9342514cdab1661beb0bfab52613b487",
+      "cpu": 0,
+      "portMappings": [
+        {
+          "containerPort": 8080,
+          "hostPort": 8080,
+          "protocol": "tcp",
+          "name": "energypulse-8080-tcp",
+          "appProtocol": "http"
+        }
+      ],
+      "essential": true,
+      "environment": [
+        {
+          "name": "SPRING_DATASOURCE_USERNAME",
+          "value": "energypulse_user"
+        },
+        {
+          "name": "SPRING_DATASOURCE_URL",
+          "value": "jdbc:postgresql://energypulse-db.c5q60sm6w6ms.eu-north-1.rds.amazonaws.com:5432/energypulse"
+        }
+      ],
+      "environmentFiles": [],
+      "mountPoints": [],
+      "volumesFrom": [],
+      "secrets": [
+        {
+          "name": "DB_PASSWORD",
+          "valueFrom": "arn:aws:ssm:eu-north-1:516148679165:parameter/energypulse/db/password"
+        }
+      ],
+      "ulimits": [],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/energypulse-task",
+          "awslogs-create-group": "true",
+          "awslogs-region": "eu-north-1",
+          "awslogs-stream-prefix": "ecs"
+        },
+        "secretOptions": []
+      },
+      "systemControls": []
+    }
+  ],
+  "family": "energypulse-task",
+  "executionRoleArn": "arn:aws:iam::516148679165:role/ecsTaskExecutionRole",
+  "networkMode": "awsvpc",
+  "volumes": [],
+  "placementConstraints": [],
+  "runtimePlatform": {
+    "cpuArchitecture": "X86_64",
+    "operatingSystemFamily": "LINUX"
+  },
+  "requiresCompatibilities": [
+    "FARGATE"
+  ],
+  "cpu": "256",
+  "memory": "512",
+  "enableFaultInjection": false,
+  "tags": []
+}

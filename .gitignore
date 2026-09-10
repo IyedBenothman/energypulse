@@ -1,2 +1,4 @@
 *.class
 target/
+data-pipeline/.venv/
+data-pipeline/*.parquet

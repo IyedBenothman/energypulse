@@ -1,4 +1,8 @@
 *.class
 target/
+
 data-pipeline/.venv/
 data-pipeline/*.parquet
+
+__pycache__/
+*.pyc

@@ -49,6 +49,7 @@
   ],
   "family": "energypulse-task",
   "executionRoleArn": "arn:aws:iam::516148679165:role/ecsTaskExecutionRole",
+  "taskRoleArn": "arn:aws:iam::516148679165:role/EnergyPulseAppTaskRole",
   "networkMode": "awsvpc",
   "volumes": [],
   "placementConstraints": [],

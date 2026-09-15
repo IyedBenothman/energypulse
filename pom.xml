@@ -17,6 +17,7 @@
 
     <properties>
         <maven.compiler.release>21</maven.compiler.release>
+        <aws.sdk.version>2.54.13</aws.sdk.version>
     </properties>
 
     <dependencies>
@@ -87,6 +88,18 @@
     <dependency>
         <groupId>org.flywaydb</groupId>
         <artifactId>flyway-database-postgresql</artifactId>
+    </dependency>
+
+    <dependency>
+        <groupId>software.amazon.awssdk</groupId>
+        <artifactId>bedrockruntime</artifactId>
+        <version>${aws.sdk.version}</version>
+    </dependency>
+
+    <dependency>
+        <groupId>software.amazon.awssdk</groupId>
+        <artifactId>signin</artifactId>
+        <version>${aws.sdk.version}</version>
     </dependency>
 
     </dependencies>

@@ -1,6 +1,8 @@
 package com.iyed.energypulse;
 
 import org.springframework.stereotype.Service;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 import software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeClient;
 import software.amazon.awssdk.services.bedrockruntime.model.ContentBlock;
@@ -8,6 +10,7 @@ import software.amazon.awssdk.services.bedrockruntime.model.ConversationRole;
 import software.amazon.awssdk.services.bedrockruntime.model.ConverseRequest;
 import software.amazon.awssdk.services.bedrockruntime.model.ConverseResponse;
 import software.amazon.awssdk.services.bedrockruntime.model.Message;
+import software.amazon.awssdk.core.exception.SdkException;
 
 @Service
 public class EnergyInsightService {
@@ -33,7 +36,10 @@ public class EnergyInsightService {
     public CustomerInsightResponse generateCustomerInsight(String customerId) {
 
         Customer customer = customerRepository.findById(customerId)
-                .orElseThrow();
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Customer " + customerId + " not found"
+                ));
 
         var readings =
                 meterReadingRepository
@@ -113,8 +119,17 @@ public class EnergyInsightService {
                         .temperature(0.2F))
                 .build();
 
-        ConverseResponse response = bedrockRuntimeClient.converse(request);
+        ConverseResponse response;
 
+        try {
+        response = bedrockRuntimeClient.converse(request);
+        } catch (SdkException exception) {
+        throw new ResponseStatusException(
+                HttpStatus.SERVICE_UNAVAILABLE,
+                "AI insight service is temporarily unavailable"
+        );
+        }
+        
         return response.output()
                 .message()
                 .content()

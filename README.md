@@ -464,3 +464,14 @@ AI integration          ✅
 ```
 
 EnergyPulse is a completed portfolio project demonstrating backend, cloud, data engineering, CI/CD, monitoring, and AI integration.
+## Deployment Status
+
+The AWS deployment ran from September to October 2026 and was then shut down to stop costs. The infrastructure settings were exported before deletion, and a final database snapshot was kept. The deploy job in GitHub Actions now runs only when started manually; every push still runs the tests.
+
+Screenshots of the running system are in [docs/screenshots](docs/screenshots): the CI/CD pipeline, ECR images, the ECS service, API responses, RDS, logs, the scheduler, S3 partitions and Athena.
+
+### Lessons Learned
+
+- **The scheduled pipeline never ran on schedule.** A subnet ID typed by hand into the scheduler was missing one character, so every nightly `RunTask` call was rejected. I found it through the scheduler's `TargetErrorCount` metric and the error message in CloudTrail.
+- **The failure alert could not see it.** It only reacted to tasks that stopped, and these tasks never started. An alarm on `TargetErrorCount` would have caught it the first night.
+- **Next time:** infrastructure as code with Terraform, so IDs come from resources instead of being typed by hand.
